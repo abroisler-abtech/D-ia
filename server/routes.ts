@@ -10,14 +10,14 @@ app.post("/api/chat", async (req, res) => {
 
   // 1. Resposta para saudações simples
   if (msgLower === "bom dia" || msgLower === "olá" || msgLower === "oi") {
-    return res.json({ response: "Bom dia, André! Como posso te ajudar hoje?" });
+     return res.json({ text: "Bom dia, André! Como posso te ajudar hoje?" });
   }
 
   // 2. Chamada automática para o agente de busca Python
   try {
     const { stdout } = await execAsync(`python3 agente_web.py "${message}"`);
-    return res.json({ response: stdout });
+    return res.json({ txt: stdout });
   } catch (error) {
-    return res.json({ response: "Desculpe, tive um problema ao pesquisar na web." });
+    return res.json({ txt: "Desculpe, tive um problema ao pesquisar na web." });
   }
 });
