@@ -1,0 +1,16 @@
+# Copie o conteúdo para um arquivo .env local e substitua os placeholders.
+DATABASE_URL=mysql://usuario:senha@localhost:3306/deia
+JWT_SECRET=gere-um-segredo-longo-e-aleatorio
+VITE_APP_ID=seu-app-id
+OAUTH_SERVER_URL=https://api.manus.im
+VITE_OAUTH_PORTAL_URL=https://oauth.manus.im
+BUILT_IN_FORGE_API_URL=https://seu-endpoint-de-ia
+BUILT_IN_FORGE_API_KEY=cole-sua-chave-aqui
+VITE_APP_TITLE=Déia
+VITE_APP_LOGO=
+OWNER_OPEN_ID=
+OWNER_NAME=
+VITE_ANALYTICS_ENDPOINT=
+VITE_ANALYTICS_WEBSITE_ID=
+VITE_FRONTEND_FORGE_API_KEY=
+VITE_FRONTEND_FORGE_API_URL=
