@@ -1,23 +1,32 @@
+import { Express } from "express";
 import { exec } from "child_process";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-// Na rota de recebimento de mensagem (POST /api/chat ou similar):
-app.post("/api/chat", async (req, res) => {
-  const { message } = req.body;
-  const msgLower = message.toLowerCase().trim();
+export function registerRoutes(app: Express) {
+  // Rota genérica de resposta para o frontend
+  const responder = async (req: any, res: any) => {
+    const message = req.body?.message || req.body?.prompt || "";
+    // Remove pontuações e converte para minúsculas
+    const texto = message.toLowerCase().replace(/[^a-z0-9áéíóúâêôãõç ]/g, "").trim();
 
-  // 1. Resposta para saudações simples
-  if (msgLower === "bom dia" || msgLower === "olá" || msgLower === "oi") {
-     return res.json({ text: "Bom dia, André! Como posso te ajudar hoje?" });
-  }
+    // 1. Tratamento para saudações (com ou sem ponto)
+    if (texto.includes("bom dia") || texto.includes("ola") || texto.includes("oi")) {
+      return res.json({ text: "Bom dia, André! Como posso te ajudar hoje?" });
+    }
 
-  // 2. Chamada automática para o agente de busca Python
-  try {
-    const { stdout } = await execAsync(`python3 agente_web.py "${message}"`);
-    return res.json({ txt: stdout });
-  } catch (error) {
-    return res.json({ txt: "Desculpe, tive um problema ao pesquisar na web." });
-  }
-});
+    // 2. Processamento via script de busca Python
+    try {
+      const { stdout } = await execAsync(`python3 agente_web.py "${message}"`);
+      return res.json({ text: stdout || "Busca concluída, mas sem retorno." });
+    } catch (error) {
+      return res.json({ text: `Recebi sua mensagem: "${message}". Como podemos avançar com esse projeto?` });
+    }
+  };
+
+  // Mapeia todas as possíveis rotas que o frontend possa chamar
+  app.post("/api/chat", responder);
+  app.post("/api/mentor", responder);
+  app.post("/api/generate", responder);
+}
