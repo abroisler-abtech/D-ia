@@ -401,18 +401,16 @@ if (normalizedResponseFormat) {
   payload.response_format = normalizedResponseFormat;
 }
 
-payload.contents = [{ parts: [{ text: messages[messages.length - 1]?.content || "olá" }] }];
-delete payload.model;
-delete payload.messages;
-delete payload.response_format;
+payload.model = "gemini-1.5-flash";
 
-const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+const response = await fetchWithBackoff("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
   method: "POST",
   headers: {
     "content-type": "application/json",
+    authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
   },
   body: JSON.stringify(payload),
-});  
+});
 
 if (!response.ok) {
   const errorText = await response.text();
@@ -421,13 +419,7 @@ if (!response.ok) {
   );
 }
 
-const data = await response.json();
-const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
-
-return {
-  choices: [{ message: { role: "assistant", content: textReply } }]
-} as any;
-}
+return (await response.json()) as InvokeResult;
 
 export type ModelInfo = {
   id: string;
