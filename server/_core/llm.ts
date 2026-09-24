@@ -405,7 +405,7 @@ payload.contents = [{ parts: [{ text: messages[messages.length - 1]?.content || 
 delete payload.model;
 delete payload.messages;
 
-  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
   method: "POST",
   headers: {
     "content-type": "application/json",
