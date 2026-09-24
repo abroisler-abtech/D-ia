@@ -338,76 +338,24 @@ const fetchWithBackoff = async (
     ? lastError
     : new Error("LLM request failed after exhausting retries");
 };
-
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  assertApiKey();
+  const { messages } = params;
 
-  const {
-    messages,
-    tools,
-    toolChoice,
-    tool_choice,
-    outputSchema,
-    output_schema,
-    responseFormat,
-    response_format,
-    model,
-    thinking,
-    reasoning,
-    maxTokens,
-    max_tokens,
-  } = params;
+  // Formata as mensagens para o padrão compatível da OpenAI que a Google aceita
+  const formattedMessages = messages.map(m => ({
+    role: m.role,
+    content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content)
+  }));
 
-  const payload: Record<string, unknown> = {
-    messages: messages.map(normalizeMessage),
-  };
-
-  if (model) {
-    payload.model = model;
-  }
-
-  if (tools && tools.length > 0) {
-    payload.tools = tools;
-  }
-
-  const normalizedToolChoice = normalizeToolChoice(
-    toolChoice || tool_choice,
-    tools
-  );
-  if (normalizedToolChoice) {
-    payload.tool_choice = normalizedToolChoice;
-  }
-
-  const resolvedMaxTokens = max_tokens ?? maxTokens;
-  if (typeof resolvedMaxTokens === "number") {
-    payload.max_tokens = resolvedMaxTokens;
-  }
-
-  if (thinking) {
-    payload.thinking = thinking;
-  }
-  if (reasoning) {
-    payload.reasoning = reasoning;
-  }
-
-  const normalizedResponseFormat = normalizeResponseFormat({
-    responseFormat,
-    response_format,
-    outputSchema,
-    output_schema,
-  });
-
-if (normalizedResponseFormat) {
-  payload.response_format = normalizedResponseFormat;
-}
-
-const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+  const response = await fetchWithBackoff("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      "authorization": `Bearer ${process.env.GEMINI_API_KEY}`
     },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: messages[messages.length - 1]?.content || "Olá" }] }]
+      model: "gemini-1.5-flash",
+      messages: formattedMessages
     }),
   });
 
@@ -419,14 +367,14 @@ const response = await fetchWithBackoff(`https://generativelanguage.googleapis.c
   }
 
   const data = await response.json();
-  const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
+  const textReply = data.choices?.[0]?.message?.content || "Sem resposta";
 
   return {
     choices: [{ message: { role: "assistant", content: textReply } }]
   } as any;
 }
 
-export type ModelInfo = {
+  export type ModelInfo = {
   id: string;
   object: string;
   created: number;
