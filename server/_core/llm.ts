@@ -370,3 +370,25 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     choices: [{ message: { role: "assistant", content: textReply } }]
   } as any;
 }
+
+const data = await response.json();
+  const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
+
+  return {
+    choices: [{ message: { role: "assistant", content: textReply } }]
+  } as any;
+}
+
+export async function listLLMModels(): Promise<ModelsResponse> {
+  return {
+    object: "list",
+    data: [
+      {
+        id: "gemini-1.5-flash",
+        object: "model",
+        created: Date.now(),
+        owned_by: "google"
+      }
+    ]
+  };
+}
