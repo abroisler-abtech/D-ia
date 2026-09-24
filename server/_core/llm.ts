@@ -401,24 +401,31 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.response_format = normalizedResponseFormat;
   }
 
-payload.model = "gemini-1.5-pro";
-const response = await fetchWithBackoff("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+payload.contents = [{ parts: [{ text: messages[messages.length - 1]?.content || "Olá" }] }];
+delete payload.model;
+delete payload.messages;
+
+const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
   method: "POST",
   headers: {
     "content-type": "application/json",
-    authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
   },
   body: JSON.stringify(payload),
-});  
+});
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`
-    );
-  }
+if (!response.ok) {
+  const errorText = await response.text();
+  throw new Error(
+    `LLM invoke failed: ${response.status} ${response.statusText} - ${errorText}`
+  );
+}
 
-  return (await response.json()) as InvokeResult;
+const data = await response.json();
+const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
+
+return {
+  choices: [{ message: { role: "assistant", content: textReply } }]
+} as any;
 }
 
 export type ModelInfo = {
