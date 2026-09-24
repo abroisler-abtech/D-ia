@@ -402,28 +402,29 @@ if (normalizedResponseFormat) {
 }
 
 const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-  method: "POST",
-  headers: {
-    "content-type": "application/json",
-  },
-  body: JSON.stringify({
-    contents: [{ parts: [{ text: messages[messages.length - 1]?.content || "Olá" }] }]
-  }),
-});
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: messages[messages.length - 1]?.content || "Olá" }] }]
+    }),
+  });
 
-if (!response.ok) {
-  const errorText = await response.text();
-  throw new Error(
-    `LLM invoke failed: ${response.status} ${response.statusText} - ${errorText}`
-  );
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `LLM invoke failed: ${response.status} ${response.statusText} - ${errorText}`
+    );
+  }
+
+  const data = await response.json();
+  const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
+
+  return {
+    choices: [{ message: { role: "assistant", content: textReply } }]
+  } as any;
 }
-
-const data = await response.json();
-const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
-
-return {
-  choices: [{ message: { role: "assistant", content: textReply } }]
-};
 
 export type ModelInfo = {
   id: string;
