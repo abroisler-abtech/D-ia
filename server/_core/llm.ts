@@ -401,14 +401,15 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.response_format = normalizedResponseFormat;
   }
 
-  const response = await fetchWithBackoff(resolveApiUrl(), {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${ENV.forgeApiKey}`,
-    },
-    body: JSON.stringify(payload),
-  });
+payload.model = "gemini-1.5-flash";
+const response = await fetchWithBackoff("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+    authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
+  },
+  body: JSON.stringify(payload),
+});  
 
   if (!response.ok) {
     const errorText = await response.text();
