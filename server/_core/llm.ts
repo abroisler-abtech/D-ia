@@ -423,7 +423,7 @@ const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem respos
 
 return {
   choices: [{ message: { role: "assistant", content: textReply } }]
-} as any;
+};
 
 export type ModelInfo = {
   id: string;
