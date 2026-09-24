@@ -397,21 +397,22 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     output_schema,
   });
 
-  if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
-  }
+if (normalizedResponseFormat) {
+  payload.response_format = normalizedResponseFormat;
+}
 
-payload.contents = [{ parts: [{ text: messages[messages.length - 1]?.content || "Olá" }] }];
+payload.contents = [{ parts: [{ text: messages[messages.length - 1]?.content || "olá" }] }];
 delete payload.model;
 delete payload.messages;
+delete payload.response_format;
 
-  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
   method: "POST",
   headers: {
     "content-type": "application/json",
   },
   body: JSON.stringify(payload),
-});
+});  
 
 if (!response.ok) {
   const errorText = await response.text();
