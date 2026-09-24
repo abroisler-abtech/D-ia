@@ -218,9 +218,9 @@ const resolveApiUrl = () =>
     : "https://forge.manus.im/v1/chat/completions";
 
 const assertApiKey = () => {
-  if (!ENV.forgeApiKey) {
-    throw new Error("OPENAI_API_KEY is not configured");
-  }
+ // if (!ENV.forgeApiKey) {
+   // throw new Error("OPENAI_API_KEY is not configured");
+ // }
 };
 
 const normalizeResponseFormat = ({
