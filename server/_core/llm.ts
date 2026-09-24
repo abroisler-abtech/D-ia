@@ -371,14 +371,6 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   } as any;
 }
 
-const data = await response.json();
-  const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
-
-  return {
-    choices: [{ message: { role: "assistant", content: textReply } }]
-  } as any;
-}
-
 export async function listLLMModels(): Promise<ModelsResponse> {
   return {
     object: "list",
