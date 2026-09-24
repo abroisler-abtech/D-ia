@@ -401,7 +401,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.response_format = normalizedResponseFormat;
   }
 
-payload.model = "gemini-1.5-flash";
+payload.model = "gemini-1.5-pro";
 const response = await fetchWithBackoff("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
   method: "POST",
   headers: {
