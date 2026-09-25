@@ -363,7 +363,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     });
 
     const data = await response.json();
-    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Recebi a sua mensagem.";
+const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || data.candidates?.[0]?.output || data.promptFeedback ? JSON.stringify(data) : "Olá! Como posso ajudar com o seu código Python?";
 
     return {
       choices: [
