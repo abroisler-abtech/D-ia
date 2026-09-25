@@ -21,7 +21,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       : "Olá";
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const result = await model.generateContent(userPrompt);
     const response = await result.response;
@@ -51,6 +51,6 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 }
 
 export async function listLLMModels() {
-  return [{ id: "gemini-1.5-flash", name: "Gemini 1.5 Flash" }];
+  return [{ id: "gemini-1.5-flash-latest", name: "Gemini 1.5 Flash-latest" }];
 }
 
