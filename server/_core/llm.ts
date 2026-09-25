@@ -351,15 +351,22 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     ? lastMessage.content 
     : "Olá";
 
-  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-  method: "POST",
-  headers: {
-    "content-type": "application/json",
-  },
-  body: JSON.stringify({
-    contents: [{ parts: [{ text: promptText }] }]
-  }),
-});
+  export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
+  const { messages } = params;
+  const lastMessage = messages[messages.length - 1];
+  const promptText = typeof lastMessage?.content === 'string'
+    ? lastMessage.content
+    : "Olá";
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: promptText }] }]
+    }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
