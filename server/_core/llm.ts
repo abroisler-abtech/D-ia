@@ -340,18 +340,12 @@ const fetchWithBackoff = async (
   }
 
   throw lastError instanceof Error
-    ? lastError
-    : new Error("LLM request failed after exhausting retries");
-};
+      ? lastError
+      : new Error("LLM request failed after exhausting retries");
+  }
+};  // <--- Fecha a função fetchWithBackoff
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  const { messages } = params;
-  const lastMessage = messages[messages.length - 1];
-  const promptText = typeof lastMessage?.content === 'string' 
-    ? lastMessage.content 
-    : "Olá";
-
-  export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   const { messages } = params;
   const lastMessage = messages[messages.length - 1];
   const promptText = typeof lastMessage?.content === 'string'
@@ -367,32 +361,4 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       contents: [{ parts: [{ text: promptText }] }]
     }),
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `LLM invoke failed: ${response.status} ${response.statusText} - ${errorText}`
-    );
-  }
-
-  const data = await response.json();
-  const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta";
-
-  return {
-    choices: [{ message: { role: "assistant", content: textReply } }]
-  } as any;
-}
-
-export async function listLLMModels(): Promise<ModelsResponse> {
-  return {
-    object: "list",
-    data: [
-      {
-        id: "gemini-1.5-flash",
-        object: "model",
-        created: Date.now(),
-        owned_by: "google"
-      }
-    ]
-  };
-}
+   
