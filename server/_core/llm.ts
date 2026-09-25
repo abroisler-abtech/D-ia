@@ -346,15 +346,15 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     ? lastMessage.content 
     : "Olá";
 
-  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: promptText }] }]
-    }),
-  });
+  const response = await fetchWithBackoff(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+  },
+  body: JSON.stringify({
+    contents: [{ parts: [{ text: promptText }] }]
+  }),
+});
 
   if (!response.ok) {
     const errorText = await response.text();
