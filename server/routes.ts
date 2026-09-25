@@ -23,7 +23,7 @@ export function registerRoutes(app: Express) {
       // 3. Chamada para o Gemini com formato AQ.
       console.log("Enviando para o Gemini...");
       const apiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { 
