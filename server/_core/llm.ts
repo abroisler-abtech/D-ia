@@ -352,18 +352,25 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       ? lastMessage.content
       : "Olá";
 
+    // Diretiva de treino e especialização da Déia
+    const systemInstruction = "Você é a Déia, uma assistente de inteligência artificial de elite, altamente especializada em desenvolvimento Python, engenharia de software, automações, Streamlit, Supabase e arquitetura de aplicações web. O seu objetivo é ajudar o André a estruturar código limpo, criar aplicações do zero, resolver erros e conceber soluções robustas. Responda sempre focada em Python e engenharia de software de forma prática e direta.";
+
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }]
+        contents: [
+          { role: "user", parts: [{ text: systemInstruction }] },
+          { role: "model", parts: [{ text: "Compreendido! Assumo agora o papel da Déia, especialista em Python, IA e arquitetura de software, pronta para ajudar o André a criar e estruturar qualquer aplicação." }] },
+          { role: "user", parts: [{ text: promptText }] }
+        ]
       }),
     });
 
     const data = await response.json();
-const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || data.candidates?.[0]?.output || data.promptFeedback ? JSON.stringify(data) : "Olá! Como posso ajudar com o seu código Python?";
+    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Olá! Como posso ajudar com o seu projeto em Python?";
 
     return {
       choices: [
@@ -380,7 +387,7 @@ const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || data.cand
       choices: [
         {
           message: {
-            content: "Erro de comunicação com o modelo de IA.",
+            content: "Erro de comunicação com o núcleo da IA. Vamos tentar novamente?",
           },
         },
       ],
