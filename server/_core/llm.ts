@@ -343,7 +343,6 @@ const fetchWithBackoff = async (
       ? lastError
       : new Error("LLM request failed after exhausting retries");
   }
-}
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   const { messages } = params;
