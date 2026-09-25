@@ -59,13 +59,8 @@ function responseText(result: Awaited<ReturnType<typeof invokeLLM>>) {
 }
 
 async function askMentor(messages: Parameters<typeof invokeLLM>[0]["messages"]) {
-  const model = await resolveMentorModel();
   const result = await invokeLLM({
-    ...(model ? { model } : {}),
     messages,
-    ...(model === "claude-sonnet-4-6"
-      ? { thinking: { type: "enabled", budget_tokens: 1024 }, maxTokens: 2600 }
-      : {}),
   });
   return responseText(result);
 }
