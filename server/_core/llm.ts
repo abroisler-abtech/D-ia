@@ -361,3 +361,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     }),
   });
 }
+
+export async function listLLMModels() {
+  return [{ id: "gemini-pro", name: "Gemini Pro" }];
+}
