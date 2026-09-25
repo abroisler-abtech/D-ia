@@ -344,7 +344,7 @@ const fetchWithBackoff = async (
       : new Error("LLM request failed after exhausting retries");
   }
 
-export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
+ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   try {
     const { messages } = params;
     const lastMessage = messages[messages.length - 1];
@@ -352,7 +352,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       ? lastMessage.content
       : "Olá";
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -364,7 +364,6 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 
     const data = await response.json();
     
-    // Extração segura que testa múltiplos caminhos possíveis da resposta do Google
     const textContent = 
       data.candidates?.[0]?.content?.parts?.[0]?.text || 
       data.candidates?.[0]?.output || 
@@ -395,5 +394,6 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 }
 
 export async function listLLMModels() {
-  return [{ id: "gemini-pro", name: "Gemini Pro" }];
+  return [{ id: "gemini-1.5-flash", name: "Gemini 1.5 Flash" }];
 }
+
