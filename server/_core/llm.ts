@@ -345,21 +345,47 @@ const fetchWithBackoff = async (
   }
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  const { messages } = params;
-  const lastMessage = messages[messages.length - 1];
-  const promptText = typeof lastMessage?.content === 'string'
-    ? lastMessage.content
-    : "Olá";
+  try {
+    const { messages } = params;
+    const lastMessage = messages[messages.length - 1];
+    const promptText = typeof lastMessage?.content === 'string'
+      ? lastMessage.content
+      : "Olá";
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: promptText }] }]
-    }),
-  });
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }]
+      }),
+    });
+
+    const data = await response.json();
+    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Recebi a sua mensagem.";
+
+    return {
+      choices: [
+        {
+          message: {
+            content: textContent,
+          },
+        },
+      ],
+    };
+  } catch (error) {
+    console.error("Erro detalhado no invokeLLM:", error);
+    return {
+      choices: [
+        {
+          message: {
+            content: "Erro de comunicação com o modelo de IA.",
+          },
+        },
+      ],
+    };
+  }
 }
 
 export async function listLLMModels() {
