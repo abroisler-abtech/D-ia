@@ -57,9 +57,9 @@ function responseText(result: Awaited<ReturnType<typeof invokeLLM>>) {
   }
   throw new Error("The model returned an empty response.");
 }
-
 async function askMentor(messages: Parameters<typeof invokeLLM>[0]["messages"]) {
   const result = await invokeLLM({
+    model: "gemini-1.5-pro",
     messages,
   });
   return responseText(result);
