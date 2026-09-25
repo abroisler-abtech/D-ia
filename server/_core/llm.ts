@@ -352,21 +352,24 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       ? lastMessage.content
       : "Olá";
 
-    // Instrução de contexto e especialização combinada com o pedido do André
-    const fullPrompt = `[Contexto: Você é a Déia, assistente especialista em Python, IA e arquitetura de software para o André. Responda sempre focada em criar soluções práticas, código limpo e estruturado.]\n\nPedido do utilizador: ${userPrompt}`;
-
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: fullPrompt }] }]
+        contents: [{ parts: [{ text: userPrompt }] }]
       }),
     });
 
     const data = await response.json();
-    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Desculpe, não consegui processar essa solicitação técnica. Vamos tentar novamente?";
+    
+    // Extração segura que testa múltiplos caminhos possíveis da resposta do Google
+    const textContent = 
+      data.candidates?.[0]?.content?.parts?.[0]?.text || 
+      data.candidates?.[0]?.output || 
+      (data.error ? `Erro da API: ${data.error.message}` : null) || 
+      JSON.stringify(data);
 
     return {
       choices: [
@@ -383,7 +386,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       choices: [
         {
           message: {
-            content: "Ocorreu um erro técnico ao comunicar com o núcleo da IA.",
+            content: "Erro de processamento interno.",
           },
         },
       ],
