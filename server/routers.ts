@@ -97,7 +97,7 @@ export const appRouter = router({
           const context = input.context as MentorContext;
           let webResults = [] as Awaited<ReturnType<typeof searchWeb>>;
           let webSearchWarning = "";
-
+	
           if (input.webSearch) {
             const query = input.searchQuery || messages.at(-1)?.content || context.objective || "Python";
             try {
