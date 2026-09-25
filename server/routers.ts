@@ -35,7 +35,7 @@ async function resolveMentorModel() {
 
   try {
     const { data } = await listLLMModels();
-    const preferredModels = ["gemini-1.5-pro", "gemini-pro"];
+    const preferredModels = [];
     cachedModel = preferredModels.find(candidate => data.some(model => model.id === candidate));
   } catch (error) {
     console.warn("[PyMentor] Could not resolve a preferred model; using the platform default.", error);
