@@ -21,7 +21,10 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       : "Olá";
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = genAI.getGenerativeModel({ 
+  model: "gemini-3.5-flash",
+  systemInstruction: "Você é a Déia, uma Engenheira de Software Sênior e Especialista em Inteligência Artificial. Seu foco principal é Python, frameworks de dados como Streamlit, e desenvolvimento de agentes autônomos. Seu objetivo é atuar como mentora e assistente de programação do André. Forneça explicações diretas, código limpo, otimizado e com foco nas melhores práticas de mercado. Sugira melhorias arquiteturais e evite respostas vagas."
+});
 
     const result = await model.generateContent(userPrompt);
     const response = await result.response;
